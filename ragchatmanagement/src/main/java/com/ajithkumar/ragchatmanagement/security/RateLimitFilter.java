@@ -9,6 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,6 +26,12 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private final ProxyManager<byte[]> proxyManager;
     private final Map<String, Bucket> bucketCache = new ConcurrentHashMap<>();  // Key: IP
+
+    @Value("${security.rate-limit.capacity}")
+    private String REQUEST_RATE_LIMIT;
+
+    @Value("${security.rate-limit.duration-minutes}")
+    private String REQUEST_RATE_DURATION_MINUTES;
 
     public RateLimitFilter(ProxyManager<byte[]> proxyManager) {
         this.proxyManager = proxyManager;
@@ -64,7 +71,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
         byte[] key = ("rate-limit:" + ip).getBytes(StandardCharsets.UTF_8);
         return proxyManager.builder()
                 .build(key, () -> BucketConfiguration.builder()
-                        .addLimit(Bandwidth.simple(20, Duration.ofMinutes(1)))
+                        .addLimit(Bandwidth.simple(Long.valueOf(REQUEST_RATE_LIMIT), Duration.ofMinutes(Long.valueOf(REQUEST_RATE_DURATION_MINUTES))))
                         .build());
     }
 }
