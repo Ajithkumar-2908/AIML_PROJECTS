@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,10 +16,13 @@ import java.io.IOException;
 import java.util.Collections;
 
 @Component
+@Order(2)
 public class ApiKeyAuthFilter extends OncePerRequestFilter {
 
     private static final String API_KEY_HEADER = "X-API-KEY";
-    private static final String EXPECTED_API_KEY = "my-secret-api-key"; // replace with real secret
+
+    @Value("${security.api-key}")
+    private String EXPECTED_API_KEY;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
