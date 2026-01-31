@@ -2,7 +2,9 @@ package com.ajithkumar.ragchatmanagement.service.impl;
 
 import com.ajithkumar.ragchatmanagement.dto.ChatSessionResponse;
 import com.ajithkumar.ragchatmanagement.dto.CreateChatSessionRequest;
+import com.ajithkumar.ragchatmanagement.entity.ChatMessage;
 import com.ajithkumar.ragchatmanagement.entity.ChatSession;
+import com.ajithkumar.ragchatmanagement.repository.ChatMessageRepository;
 import com.ajithkumar.ragchatmanagement.repository.ChatSessionRepository;
 import com.ajithkumar.ragchatmanagement.repository.UserRepository;
 import com.ajithkumar.ragchatmanagement.service.ChatSessionService;
@@ -11,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +34,9 @@ public class ChatSessionServiceImpl implements ChatSessionService {
 
     @Autowired
     private ChatSessionRepository chatSessionRepository;
+
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -86,13 +93,7 @@ public class ChatSessionServiceImpl implements ChatSessionService {
         log.info("Fetching chat session: {}", sessionId);
 
         try {
-            ChatSession chatSession = chatSessionRepository.findById(sessionId)
-                    .orElseThrow(() -> {
-                        log.warn("Chat session not found: {}", sessionId);
-                        return new IllegalArgumentException(
-                                "Chat session with ID " + sessionId + " not found"
-                        );
-                    });
+            ChatSession chatSession = getSession(sessionId);
 
             log.info("Chat session retrieved: {}", chatSession.getId());
             return chatSession;
@@ -100,6 +101,20 @@ public class ChatSessionServiceImpl implements ChatSessionService {
             log.error("Error fetching chat session", e);
             throw e;
         }
+    }
+
+    // Delete session + messages
+    @Transactional
+    public void deleteSession(UUID sessionId) {
+
+        log.info("Deleting chat session: {}", sessionId);
+        ChatSession session = getSession(sessionId);
+        // Delete the messages of a chat session.
+        chatMessageRepository.deleteByChatSessionId(sessionId);
+        // Delete the chat session
+        chatSessionRepository.deleteById(sessionId);
+        log.info("Chat session deleted successfully: {}", sessionId);
+
     }
 
     /**
@@ -120,13 +135,7 @@ public class ChatSessionServiceImpl implements ChatSessionService {
     public ChatSession renameSession(UUID sessionId, String newName) {
         log.info("Renaming chat session: {}", sessionId);
 
-        ChatSession chatSession = chatSessionRepository.findById(sessionId)
-                .orElseThrow(() -> {
-                    log.warn("Chat session not found: {}", sessionId);
-                    return new IllegalArgumentException(
-                            "Chat session with ID " + sessionId + " not found"
-                    );
-                });
+        ChatSession chatSession = getSession(sessionId);
 
         chatSession.setSessionName(newName);
         chatSession.setUpdatedDate(LocalDateTime.now());
@@ -140,13 +149,7 @@ public class ChatSessionServiceImpl implements ChatSessionService {
     public ChatSession setFavourite(UUID sessionId, boolean favourite) {
         log.info("Setting favourite={} for chat session: {}", favourite, sessionId);
 
-        ChatSession chatSession = chatSessionRepository.findById(sessionId)
-                .orElseThrow(() -> {
-                    log.warn("Chat session not found: {}", sessionId);
-                    return new IllegalArgumentException(
-                            "Chat session with ID " + sessionId + " not found"
-                    );
-                });
+        ChatSession chatSession  = getSession(sessionId);
 
         chatSession.setIsFavourite(favourite);
         chatSession.setUpdatedDate(LocalDateTime.now());
@@ -155,6 +158,21 @@ public class ChatSessionServiceImpl implements ChatSessionService {
 
         log.info("Chat session favourite status updated successfully: {}", updatedSession.getId());
         return updatedSession;
+    }
+
+    // Retrieve messages in Descending Order
+    public Page<ChatMessage> getMessages(UUID sessionId, Pageable pageable) {
+        return chatMessageRepository.findByChatSessionIdOrderByCreatedDateDesc(sessionId, pageable);
+    }
+
+    private ChatSession getSession(UUID sessionId) {
+        return chatSessionRepository.findById(sessionId)
+                .orElseThrow(() -> {
+                    log.warn("Chat session not found: {}", sessionId);
+                    return new IllegalArgumentException(
+                            "Chat session with ID " + sessionId + " not found"
+                    );
+                });
     }
 
     /**

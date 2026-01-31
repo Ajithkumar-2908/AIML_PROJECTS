@@ -2,7 +2,10 @@ package com.ajithkumar.ragchatmanagement.service;
 
 import com.ajithkumar.ragchatmanagement.dto.ChatSessionResponse;
 import com.ajithkumar.ragchatmanagement.dto.CreateChatSessionRequest;
+import com.ajithkumar.ragchatmanagement.entity.ChatMessage;
 import com.ajithkumar.ragchatmanagement.entity.ChatSession;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
@@ -38,6 +41,10 @@ public interface ChatSessionService {
     ChatSession renameSession(UUID sessionId, String newName);
 
     ChatSession setFavourite(UUID sessionId, boolean favourite);
+
+    void deleteSession(UUID sessionId);
+
+    Page<ChatMessage> getMessages(UUID sessionId, Pageable pageable);
 
 }
 

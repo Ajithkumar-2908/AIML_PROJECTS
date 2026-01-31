@@ -1,14 +1,16 @@
 package com.ajithkumar.ragchatmanagement.controller;
 
-import com.ajithkumar.ragchatmanagement.dto.ChatSessionResponse;
-import com.ajithkumar.ragchatmanagement.dto.CreateChatSessionRequest;
-import com.ajithkumar.ragchatmanagement.dto.ErrorResponse;
+import com.ajithkumar.ragchatmanagement.dto.*;
+import com.ajithkumar.ragchatmanagement.entity.ChatMessage;
 import com.ajithkumar.ragchatmanagement.entity.ChatSession;
+import com.ajithkumar.ragchatmanagement.service.ChatMessageService;
 import com.ajithkumar.ragchatmanagement.service.ChatSessionService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,9 @@ public class ChatSessionController {
 
     @Autowired
     private ChatSessionService chatSessionService;
+
+    @Autowired
+    private ChatMessageService chatMessageService;
 
 //    public ChatSessionController(ChatSessionService chatSessionService) {
 //        this.chatSessionService = chatSessionService;
@@ -111,6 +116,45 @@ public class ChatSessionController {
         return ResponseEntity.status(HttpStatus.OK).body(chatSession);
 
 
+    }
+
+    // Delete session and messages
+    @DeleteMapping("/{sessionId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSession(@PathVariable UUID sessionId) {
+        chatSessionService.deleteSession(sessionId);
+    }
+
+    // Create a message in a session
+    @PostMapping("/{sessionId}/messages")
+    public ResponseEntity<ChatMessageResponse> createMessage(
+            @PathVariable UUID sessionId,
+            @Valid @RequestBody CreateChatMessageRequest request) {
+
+        ChatMessageResponse chatMessageResponse =  chatMessageService.createMessage(sessionId, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(chatMessageResponse);
+
+    }
+
+    // Retrieve message history
+    @GetMapping("/{sessionId}/messages")
+    public Page<ChatMessage> getMessages(
+            @PathVariable UUID sessionId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return chatSessionService.getMessages(sessionId, PageRequest.of(page, size));
+    }
+
+    // Detele a message in a session.
+    @DeleteMapping("/{sessionId}/messages/{messageId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMessage(
+            @PathVariable UUID sessionId,
+            @PathVariable UUID messageId) {
+
+        chatMessageService.deleteMessage(sessionId, messageId);
     }
 
 }

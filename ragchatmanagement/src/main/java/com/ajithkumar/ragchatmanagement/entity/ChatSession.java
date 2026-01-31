@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -49,6 +51,9 @@ public class ChatSession {
 
     @Column(name = "updateddate", nullable = false)
     private LocalDateTime updatedDate;
+
+    @OneToMany(mappedBy = "chatSession", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> chatMessages = new ArrayList<>();
 
     public UUID getId() {
         return id;
@@ -96,5 +101,15 @@ public class ChatSession {
 
     public void setUpdatedDate(LocalDateTime updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    public void addMessage(ChatMessage message) {
+        chatMessages.add(message);
+        message.setChatSession(this);
+    }
+
+    public void removeMessage(ChatMessage message) {
+        chatMessages.remove(message);
+        message.setChatSession(null);
     }
 }

@@ -1,12 +1,16 @@
 package com.ajithkumar.ragchatmanagement.entity;
 
+import com.ajithkumar.ragchatmanagement.utils.JsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+//import org.hibernate.annotations.TypeDef;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -24,14 +28,16 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "chatsessionid", nullable = false)
-    private UUID chatSessionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chatsessionid", nullable = false)
+    private ChatSession chatSession;
 
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "context", columnDefinition = "jsonb")
-    private String context;
+    @Column(name = "context", columnDefinition = "TEXT")
+    @Convert(converter = JsonConverter.class)
+    private Map<String, Object> context;
 
     @Column(name = "attachment")
     private String attachment;
@@ -42,6 +48,7 @@ public class ChatMessage {
     @Column(name = "updateddate", nullable = false)
     private LocalDateTime updatedDate;
 
+
     public UUID getId() {
         return id;
     }
@@ -50,12 +57,12 @@ public class ChatMessage {
         this.id = id;
     }
 
-    public UUID getChatSessionId() {
-        return chatSessionId;
+    public ChatSession getChatSession() {
+        return chatSession;
     }
 
-    public void setChatSessionId(UUID chatSessionId) {
-        this.chatSessionId = chatSessionId;
+    public void setChatSession(ChatSession chatSession) {
+        this.chatSession = chatSession;
     }
 
     public String getContent() {
@@ -66,11 +73,11 @@ public class ChatMessage {
         this.content = content;
     }
 
-    public String getContext() {
+    public Map<String, Object> getContext() {
         return context;
     }
 
-    public void setContext(String context) {
+    public void setContext(Map<String, Object> context) {
         this.context = context;
     }
 
