@@ -1,21 +1,13 @@
 package com.ajithkumar.ragchatmanagement.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
  * User entity representing a user in the RAG chat management system.
  */
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Builder
+
 @Entity
 @Table(name = "\"user\"")
 public class User {

@@ -31,7 +31,7 @@ import java.util.UUID;
 //@RequiredArgsConstructor
 public class ChatSessionController {
 
-    Logger log = LoggerFactory.getLogger(ChatSessionController.class);
+    private static final Logger log = LoggerFactory.getLogger(ChatSessionController.class);
 
     @Autowired
     private ChatSessionService chatSessionService;

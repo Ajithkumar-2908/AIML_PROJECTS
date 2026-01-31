@@ -8,8 +8,7 @@ import com.ajithkumar.ragchatmanagement.repository.ChatMessageRepository;
 import com.ajithkumar.ragchatmanagement.repository.ChatSessionRepository;
 import com.ajithkumar.ragchatmanagement.repository.UserRepository;
 import com.ajithkumar.ragchatmanagement.service.ChatSessionService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +24,11 @@ import java.util.UUID;
 /**
  * Implementation of ChatSessionService with blocking (non-reactive) operations.
  */
-//@Slf4j
+
 @Service
-@RequiredArgsConstructor
 public class ChatSessionServiceImpl implements ChatSessionService {
 
-    Logger log = LoggerFactory.getLogger(ChatSessionServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ChatSessionServiceImpl.class);
 
     @Autowired
     private ChatSessionRepository chatSessionRepository;

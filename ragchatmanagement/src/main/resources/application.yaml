@@ -30,6 +30,36 @@ spring:
   jackson:
     time-zone: Asia/Kolkata
 
+springdoc:
+  swagger-ui:
+    path: /           # Make Swagger UI available at the root URL
+    operationsSorter: method
+    display-request-duration: true
+    doc-expansion: list
+  api-docs:
+    path: /v3/api-docs
+
+cors:
+  allowed-origins:
+    - "http://localhost:8080"
+  allowed-methods:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+    - "OPTIONS"
+  allowed-headers:
+    - "Authorization"
+    - "Content-Type"
+    - "X-API-KEY"
+  exposed-headers:
+    - "Authorization"
+  allow-credentials: true
+
+API_KEY: ragchat-secret-key
+
+
 logging:
   level:
     org.hibernate.SQL: DEBUG

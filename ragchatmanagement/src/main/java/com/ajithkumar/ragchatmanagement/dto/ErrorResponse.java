@@ -1,19 +1,12 @@
 package com.ajithkumar.ragchatmanagement.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 /**
  * DTO for error responses.
  */
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Builder
+
 public class ErrorResponse {
 
     public ErrorResponse(int status, String message, String error, LocalDateTime timestamp) {

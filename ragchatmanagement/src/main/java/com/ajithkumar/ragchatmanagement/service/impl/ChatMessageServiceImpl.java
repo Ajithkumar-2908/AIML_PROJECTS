@@ -19,7 +19,7 @@ import java.util.UUID;
 @Service
 public class ChatMessageServiceImpl implements ChatMessageService {
 
-    Logger log = LoggerFactory.getLogger(ChatMessageServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ChatMessageServiceImpl.class);
 
     @Autowired
     private ChatSessionRepository chatSessionRepository;

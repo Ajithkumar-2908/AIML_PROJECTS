@@ -1,10 +1,6 @@
 package com.ajithkumar.ragchatmanagement.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,10 +10,7 @@ import java.util.UUID;
 /**
  * ChatSession entity representing a chat session in the RAG chat management system.
  */
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Builder
+
 @Entity
 @Table(name = "chatsession")
 public class ChatSession {

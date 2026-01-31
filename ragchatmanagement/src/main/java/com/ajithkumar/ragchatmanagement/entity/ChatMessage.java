@@ -1,14 +1,9 @@
 package com.ajithkumar.ragchatmanagement.entity;
 
 import com.ajithkumar.ragchatmanagement.utils.JsonConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
-//import org.hibernate.annotations.TypeDef;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
@@ -16,12 +11,10 @@ import java.util.UUID;
 /**
  * ChatMessage entity representing a message within a chat session.
  */
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Builder
+
 @Entity
 @Table(name = "chatmessage")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ChatMessage {
 
     @Id
@@ -30,6 +23,7 @@ public class ChatMessage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatsessionid", nullable = false)
+    @JsonIgnore
     private ChatSession chatSession;
 
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
