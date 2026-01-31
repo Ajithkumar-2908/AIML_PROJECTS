@@ -8,6 +8,7 @@ services:
     ports:
       - '5432:5432'
     volumes:
+      - postgres-data:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
       - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
 
@@ -43,6 +44,27 @@ services:
       redis:
         condition: service_healthy
 
+    # pgAdmin for database browsing
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ragchat-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@ragchat.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"  # Access on http://localhost:5050
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+
+
 volumes:
+  postgres-data:
+    driver: local
   redis-data:
+    driver: local
+  pgadmin-data:
     driver: local
