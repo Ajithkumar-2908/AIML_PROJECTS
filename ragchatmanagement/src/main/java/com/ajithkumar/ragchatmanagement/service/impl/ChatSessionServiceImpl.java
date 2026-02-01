@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Implementation of ChatSessionService with blocking (non-reactive) operations.
+ * Implementation of ChatSessionService.
  */
 
 @Service
@@ -101,7 +101,12 @@ public class ChatSessionServiceImpl implements ChatSessionService {
         }
     }
 
-    // Delete session + messages
+    /**
+     * Delete a chat session by ID.
+     *
+     * @param sessionId the ID of the chat session to delete
+     * @throws IllegalArgumentException if session is not found
+     */
     @Transactional
     public void deleteSession(UUID sessionId) {
 
@@ -130,6 +135,14 @@ public class ChatSessionServiceImpl implements ChatSessionService {
         return exists;
     }
 
+    /**
+     * Rename a chat session.
+     *
+     * @param sessionId the ID of the chat session to rename
+     * @param newName   the new name for the chat session
+     * @return the updated chat session
+     * @throws IllegalArgumentException if session is not found
+     */
     public ChatSession renameSession(UUID sessionId, String newName) {
         log.info("Renaming chat session: {}", sessionId);
 
@@ -144,6 +157,14 @@ public class ChatSessionServiceImpl implements ChatSessionService {
         return updatedSession;
     }
 
+    /**
+     * Mark or unmark a chat session as favourite.
+     *
+     * @param sessionId the ID of the chat session
+     * @param favourite true to mark as favourite, false to unmark
+     * @return the updated chat session
+     * @throws IllegalArgumentException if session is not found
+     */
     public ChatSession setFavourite(UUID sessionId, boolean favourite) {
         log.info("Setting favourite={} for chat session: {}", favourite, sessionId);
 
@@ -158,11 +179,22 @@ public class ChatSessionServiceImpl implements ChatSessionService {
         return updatedSession;
     }
 
-    // Retrieve messages in Descending Order
+    /**
+     * Retrieve paginated chat messages for a session.
+     *
+     * @param sessionId the ID of the chat session
+     * @param pageable  pagination information
+     * @return paginated chat messages
+     * @throws IllegalArgumentException if session is not found
+     */
     public Page<ChatMessage> getMessages(UUID sessionId, Pageable pageable) {
+
+        log.info("Fetching messages for chat session: {}", sessionId);
         return chatMessageRepository.findByChatSessionIdOrderByCreatedDateDesc(sessionId, pageable);
+
     }
 
+    // Helper method to get ChatSession by ID with error handling.
     private ChatSession getSession(UUID sessionId) {
         return chatSessionRepository.findById(sessionId)
                 .orElseThrow(() -> {
@@ -173,21 +205,5 @@ public class ChatSessionServiceImpl implements ChatSessionService {
                 });
     }
 
-    /**
-     * Convert ChatSession entity to ChatSessionResponse DTO.
-     *
-     * @param chatSession the chat session entity
-     * @return the chat session response DTO
-     */
-//    private ChatSessionResponse toResponse(ChatSession chatSession) {
-//        return ChatSessionResponse.builder()
-//                .id(chatSession.getId())
-//                .userId(chatSession.getUserId())
-//                .sessionName(chatSession.getSessionName())
-//                .isFavourite(chatSession.getIsFavourite())
-//                .createdDate(chatSession.getCreatedDate())
-//                .updatedDate(chatSession.getUpdatedDate())
-//                .build();
-//    }
 
 }

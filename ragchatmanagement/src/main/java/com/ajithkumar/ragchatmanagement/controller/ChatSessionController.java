@@ -23,12 +23,10 @@ import java.util.UUID;
 
 /**
  * REST Controller for chat session operations.
- * Provides blocking (non-reactive) endpoints using Spring MVC.
  */
-//@Slf4j
+
 @RestController
 @RequestMapping("/api/v1/chat-sessions")
-//@RequiredArgsConstructor
 public class ChatSessionController {
 
     private static final Logger log = LoggerFactory.getLogger(ChatSessionController.class);
@@ -39,9 +37,6 @@ public class ChatSessionController {
     @Autowired
     private ChatMessageService chatMessageService;
 
-//    public ChatSessionController(ChatSessionService chatSessionService) {
-//        this.chatSessionService = chatSessionService;
-//    }
 
     /**
      * Create a new chat session for a user.
@@ -86,75 +81,118 @@ public class ChatSessionController {
         return ResponseEntity.ok(response);
     }
 
-    // Rename session
+    /**
+     * Rename a chat session.
+     *
+     * @param sessionId the ID of the chat session
+     * @param request   the rename request containing the new name
+     * @return response entity with chat session details
+     */
     @PatchMapping("/{sessionId}/rename")
     public ResponseEntity<ChatSession> renameSession(
             @PathVariable UUID sessionId,
             @RequestBody Map<String, String> request) {
 
         if (request.containsKey("name") == false || request.get("name").isEmpty()) {
+            log.error("Invalid session name provided for renaming session: {}", sessionId);
             throw new IllegalArgumentException("Session name cannot be empty");
         }
 
         ChatSession chatSession = chatSessionService.renameSession(sessionId, request.get("name"));
+        log.info("Chat session renamed successfully: {}", chatSession.getId());
         return ResponseEntity.status(HttpStatus.OK).body(chatSession);
 
     }
 
-    // Mark / Unmark favourite
+    /**
+     * Mark or unmark a chat session as favourite.
+     *
+     * @param sessionId the ID of the chat session
+     * @param request   the request containing the favourite status
+     * @return response entity with chat session details
+     */
     @PatchMapping("/{sessionId}/updateFavourite")
     public ResponseEntity<ChatSession> markFavourite(
             @PathVariable UUID sessionId,
             @RequestBody Map<String, Boolean> request) {
 
         if (!request.containsKey("favourite") || request.get("favourite") == null) {
+            log.error("Favorite status not provided for session: {}", sessionId);
             throw new IllegalArgumentException("Favorite status must be provided");
         }
 
         ChatSession chatSession = chatSessionService.setFavourite(sessionId, request.get("favourite"));
-
+        log.info("Chat session favourite status updated successfully: {}", chatSession.getId());
         return ResponseEntity.status(HttpStatus.OK).body(chatSession);
 
 
     }
 
-    // Delete session and messages
+    /**
+     * Delete a chat session.
+     *
+     * @param sessionId the ID of the chat session
+     */
     @DeleteMapping("/{sessionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSession(@PathVariable UUID sessionId) {
         chatSessionService.deleteSession(sessionId);
     }
 
-    // Create a message in a session
+    /**
+     * Create a new message in a chat session.
+     *
+     * @param sessionId the ID of the chat session
+     * @param request   the create chat message request
+     * @return response entity with created chat message
+     */
     @PostMapping("/{sessionId}/messages")
     public ResponseEntity<ChatMessageResponse> createMessage(
             @PathVariable UUID sessionId,
             @Valid @RequestBody CreateChatMessageRequest request) {
 
+        log.info("Received request to create message in session: {}", sessionId);
         ChatMessageResponse chatMessageResponse =  chatMessageService.createMessage(sessionId, request);
 
+        log.info("Chat message created successfully in session: {}", sessionId);
         return ResponseEntity.status(HttpStatus.CREATED).body(chatMessageResponse);
 
     }
 
-    // Retrieve message history
+    /**
+     * Get messages in a chat session with pagination.
+     *
+     * @param sessionId the ID of the chat session
+     * @param page      the page number (default is 0)
+     * @return response entity with paginated chat messages
+     */
     @GetMapping("/{sessionId}/messages")
     public Page<ChatMessage> getMessages(
             @PathVariable UUID sessionId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
+        log.info("Received request to fetch messages for session: {}", sessionId);
         return chatSessionService.getMessages(sessionId, PageRequest.of(page, size));
+
     }
 
-    // Detele a message in a session.
+    /**
+     * Delete a chat message in a session.
+     *
+     * @param sessionId the ID of the chat session
+     * @param messageId the ID of the chat message
+     */
     @DeleteMapping("/{sessionId}/messages/{messageId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMessage(
             @PathVariable UUID sessionId,
             @PathVariable UUID messageId) {
 
+        log.info("Received request to delete message: {} in session: {}", messageId, sessionId);
         chatMessageService.deleteMessage(sessionId, messageId);
+        log.info("Chat message deleted successfully: {}", messageId);
+
     }
 
 }

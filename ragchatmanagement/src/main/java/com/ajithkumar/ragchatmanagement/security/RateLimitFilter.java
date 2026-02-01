@@ -20,6 +20,9 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Filter to enforce rate limiting based on client IP address.
+ */
 @Component
 @Order(1)
 public class RateLimitFilter extends OncePerRequestFilter {
@@ -48,10 +51,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
         // CRITICAL: Reuse the SAME bucket instance for this IP
         Bucket bucket = bucketCache.computeIfAbsent(ip, this::createBucketForIp);
 
-//        Bucket bucket = proxyManager.builder()
-//                .build(key, () -> BucketConfiguration.builder()
-//                        .addLimit(Bandwidth.simple(20, Duration.ofMinutes(1)))
-//                        .build());
 
         // To bypass OPTIONS call as Swagger might call this multiple times.
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {

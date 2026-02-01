@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Implementation of ChatMessageService.
+ */
 @Service
 public class ChatMessageServiceImpl implements ChatMessageService {
 
@@ -28,6 +31,12 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private ChatMessageRepository chatMessageRepository;
 
 
+    /**
+     * Create a new message in a chat session.
+     * @param sessionId chat session ID
+     * @param request create chat message request
+     * @return created chat message response
+     */
     @Transactional
     public ChatMessageResponse createMessage(UUID sessionId, CreateChatMessageRequest request) {
 
@@ -42,11 +51,17 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         message.setCreatedDate(LocalDateTime.now());
         message.setUpdatedDate(LocalDateTime.now());
 
+        log.info("Creating message in session: {}", sessionId);
         ChatMessage saved = chatMessageRepository.save(message);
-
+        log.info("Message created with ID: {}", saved.getId());
         return mapToResponse(saved);
     }
 
+    /**
+     * Delete a message from a chat session.
+     * @param sessionId chat session ID
+     * @param messageId chat message ID
+     */
     @Transactional
     public void deleteMessage(UUID sessionId, UUID messageId) {
 
@@ -57,12 +72,20 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         ChatMessage message = getMessage(messageId);
 
         if (!message.getChatSession().getId().equals(sessionId)) {
+            log.warn("Message {} does not belong to session {}", messageId, sessionId);
             throw new IllegalArgumentException("Message does not belong to the given session");
         }
 
         chatMessageRepository.delete(message);
+        log.info("Deleted message {} from session {}", messageId, sessionId);
+
     }
 
+    /**
+     * Map ChatMessage entity to ChatMessageResponse DTO.
+     * @param message chat message entity
+     * @return chat message response DTO
+     */
     private ChatMessageResponse mapToResponse(ChatMessage message) {
         ChatMessageResponse response = new ChatMessageResponse();
         response.setId(message.getId());
@@ -74,6 +97,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         return response;
     }
 
+    // Helper method to get ChatSession by ID with error handling.
     private ChatSession getSession(UUID sessionId) {
         return chatSessionRepository.findById(sessionId)
                 .orElseThrow(() -> {
@@ -84,6 +108,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 });
     }
 
+    // Helper method to get ChatMessage by ID with error handling.
     private ChatMessage getMessage(UUID messageId) {
         return chatMessageRepository.findById(messageId)
                 .orElseThrow(() -> {

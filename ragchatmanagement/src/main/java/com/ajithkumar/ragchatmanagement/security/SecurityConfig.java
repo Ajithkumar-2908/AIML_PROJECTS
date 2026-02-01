@@ -11,6 +11,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+/**
+ * Security configuration class for setting up HTTP security, CORS, and filters.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

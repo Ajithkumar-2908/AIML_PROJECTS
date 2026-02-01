@@ -15,6 +15,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
+/**
+ * Filter to authenticate requests based on an API key provided in the headers.
+ */
 @Component
 @Order(2)
 public class ApiKeyAuthFilter extends OncePerRequestFilter {

@@ -7,6 +7,9 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for OpenAPI documentation with API key security scheme.
+ */
 @Configuration
 public class OpenApiConfig {
 

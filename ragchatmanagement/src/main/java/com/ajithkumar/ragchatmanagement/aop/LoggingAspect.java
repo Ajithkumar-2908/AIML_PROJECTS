@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+/**
+ * Aspect for logging method execution details in controllers and services.
+ */
 @Aspect
 @Component
 public class LoggingAspect {

@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Configuration properties for CORS settings.
+ */
 @Component
 @ConfigurationProperties(prefix = "cors")
 public class CorsProperties {

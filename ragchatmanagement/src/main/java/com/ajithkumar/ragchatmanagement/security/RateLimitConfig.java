@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 
+/**
+ * Configuration class for rate limiting using Bucket4j with Redis.
+ */
 @Configuration
 public class RateLimitConfig {
 
