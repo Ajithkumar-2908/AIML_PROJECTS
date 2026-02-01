@@ -11,6 +11,8 @@ A robust AI Chat Session Management system built with Java, Spring Boot, Postgre
 - Retrieve Chat Messages with Pagination.
 - User existence validation
 - Error handling with meaningful HTTP status codes and messages.
+- Healthy checks for application and dependencies
+- Health Check Endpoint: `/actuator/health`
 - Comprehensive unit tests with Mockito and JUnit
 
 ## Key Features
@@ -35,6 +37,7 @@ A robust AI Chat Session Management system built with Java, Spring Boot, Postgre
 - FlywayDB
 - PG Admin (Postgres DB Management Tool)
 - Maven
+- GIT
 - Docker and Docker Compose
 - IntelliJ IDEA
 - JUnit 5 & Mockito
@@ -43,8 +46,30 @@ A robust AI Chat Session Management system built with Java, Spring Boot, Postgre
 
 - Java Development Kit (JDK) 21 or higher
 - Maven 3.6+
+- GIT
 - Docker
 - IntelliJ IDEA (recommended)
+
+## Data Model
+The application consists of three main entities: User, ChatSession, and ChatMessage.
+- **User**: Represents a user of the chat application. Each user has a unique identifier and can have multiple chat sessions.
+- **ChatSession**: Represents a chat session associated with a user. Each session has a unique identifier, a name, a favourite flag, and is linked to multiple chat messages.
+- **ChatMessage**: Represents a message within a chat session. Each message has a unique identifier, content, context (key and value pair to hold json context), timestamp, and is linked to a specific chat session.
+- The relationships between these entities are as follows:
+  - A User can have multiple ChatSessions (One-to-Many relationship).
+  - A ChatSession can have multiple ChatMessages (One-to-Many relationship).
+
+```yaml
+User
+   |
+   | 1 → N
+   |
+   ChatSession
+   |
+   | 1 → N
+   |
+   ChatMessage
+```
 
 
 ## Installation
@@ -247,11 +272,33 @@ Services:
 Once the application is running, you can access the Swagger UI for API documentation at:
 http://localhost:8080/swagger-ui/index.html
 
+Health Check Endpoint:
+http://localhost:8080/actuator/health
+
 Note: The above mention Swagger UI does not require any authentication and is publicly accessible but the actual APIs require API-KEY based authentication.
 
 Pass the Header with the API requests:
 ```
 X-API-KEY: my-secret-api-key
+```
+
+Note:
+1. To update the "Favorite" status of a chat session, use the following endpoints:
+- Mark as Favorite: `/{sessionId}/updateFavourite`
+- Body should have the Key and Value:
+```json
+{
+  "favourite": true
+}
+```
+
+2. To rename a chat session, use the following endpoint:
+- Rename Session: `/{sessionId}/rename`
+- Body should have the Key and Value:
+```json
+{
+  "name": "New Session Name"
+}
 ```
 
 ## Running Tests
