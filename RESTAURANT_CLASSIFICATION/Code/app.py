@@ -3,8 +3,8 @@ import pandas as pd
 import pickle
 from recommender import recommend
 
-cleaned_path = r".\RESTAURANT_CLASSIFICATION\Data\cleaned_data.csv"
-cuisine_encoder_path = r".\RESTAURANT_CLASSIFICATION\Data\cuisine_encoder.pkl"
+cleaned_path = r"..\RESTAURANT_CLASSIFICATION\Data\cleaned_data.csv"
+cuisine_encoder_path = r"..\RESTAURANT_CLASSIFICATION\Data\cuisine_encoder.pkl"
 
 cleaned_df = pd.read_csv(cleaned_path)
 mlb = pickle.load(open(cuisine_encoder_path, "rb"))

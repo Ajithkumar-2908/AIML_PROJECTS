@@ -3,12 +3,12 @@ import pickle
 from sklearn.metrics.pairwise import euclidean_distances
 
 
-cleaned_path = r".\RESTAURANT_CLASSIFICATION\Data\cleaned_data.csv"
-new_encoded_path = r".\RESTAURANT_CLASSIFICATION\Data\new\new_encoded_data.csv"
-k_means_path = r".\RESTAURANT_CLASSIFICATION\Models\kmeans_model.pkl"
-scaler_path = r".\RESTAURANT_CLASSIFICATION\Models\scaler.pkl"
-cuisine_encoder_path = r".\RESTAURANT_CLASSIFICATION\Data\cuisine_encoder.pkl"
-city_encoder_path = r".\RESTAURANT_CLASSIFICATION\Data\city_encoder.pkl"
+cleaned_path = r"..\RESTAURANT_CLASSIFICATION\Data\cleaned_data.csv"
+new_encoded_path = r"..\RESTAURANT_CLASSIFICATION\Data\new\new_encoded_data.csv"
+k_means_path = r"..\RESTAURANT_CLASSIFICATION\Models\kmeans_model.pkl"
+scaler_path = r"..\RESTAURANT_CLASSIFICATION\Models\scaler.pkl"
+cuisine_encoder_path = r"..\RESTAURANT_CLASSIFICATION\Data\cuisine_encoder.pkl"
+city_encoder_path = r"..\RESTAURANT_CLASSIFICATION\Data\city_encoder.pkl"
 
 # Load saved objects once
 
