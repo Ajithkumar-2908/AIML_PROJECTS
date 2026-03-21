@@ -8,6 +8,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import seaborn as sns
 
+from VisualizationHelper import plot_monthly_gainers_losers, plot_sector_performance, plot_stock_correlation_heatmap, plot_top_volatile_stocks, plot_cumulative_return_top5
+
 
 
 connection = mysql.connector.connect(
@@ -61,3 +63,57 @@ query = "select avg(open) as avg_open, avg(close) as avg_close, avg(high) as avg
 average_price_volume_df = pd.read_sql(query, connection)
 
 print(f"Average of all stocks is {average_price_volume_df}")
+
+# Section header
+st.subheader("📊 Market Summary")
+
+# 1. Green vs Red Stocks (KPIs)
+col1, col2 = st.columns(2)
+
+with col1:
+    st.metric(
+        label="🟢 Green Stocks Count",
+        value=green_stocks_count
+    )
+
+with col2:
+    st.metric(
+        label="🔴 Red Stocks Count",
+        value=red_stocks_count
+    )
+
+# 2. Top 10 Green/Red Stocks
+st.subheader("🏆 Top Performers & Losers")
+
+col3, col4 = st.columns(2)
+
+with col3:
+    st.markdown("### 🟢 Top 10 Green Stocks")
+    st.dataframe(top_10_green_stocks)
+
+with col4:
+    st.markdown("### 🔴 Top 10 Red Stocks")
+    st.dataframe(top_10_red_stocks)
+
+# 3. Average Price & Volume
+st.subheader("📈 Average Price & Volume")
+
+st.dataframe(average_price_volume_df)
+
+print("Entire Stocks DataFrame:")
+print(stocks_df.head(5))
+
+
+plot_top_volatile_stocks(stocks_df)
+
+plot_cumulative_return_top5(stocks_df)
+
+sector_data_path = r"../Data/Sector_data - Sheet1.csv"
+plot_sector_performance(
+        stocks_df,
+        sector_data_path
+    )
+
+plot_stock_correlation_heatmap(stocks_df)
+
+plot_monthly_gainers_losers(stocks_df)
